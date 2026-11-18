@@ -1,17 +1,16 @@
 # GitHub contributions: a user's last year of contributions, one column per week,
-# fetched live from the GitHub GraphQL API. Needs a token (any classic or
-# fine-grained token works; it needs no scopes for public contributions).
-
-import json
+# from GitHub's public https://github.com/<username>.contribs endpoint. No token is
+# needed; GitHub refreshes that data once a day.
 
 import gitmatrix
 from fetch import AsyncFetch
 from scrolling import Scroll
 
 NAME = "github_contributions"
-HOST = "api.github.com"
-QUERY = ("query($login:String!){user(login:$login){contributionsCollection{contributionCalendar"
-         "{totalContributions weeks{contributionDays{contributionCount weekday}}}}}}")
+HOST = "github.com"
+DAY_S = 24 * 60 * 60
+# ticks_diff() only spans ~6.2 days, so AsyncFetch can't time a longer interval
+MAX_DAYS = 6
 # brightness for GitHub's five levels (none, then quartiles of the busiest day)
 LEVELS = (0.04, 0.2, 0.45, 0.7, 1.0)
 
@@ -33,51 +32,48 @@ def _rgb(text):
 
 def _on_complete(f):
     global weeks, total, message
-    data = f.to_json()
-    user = (data.get("data") or {}).get("user")
-    if not user:
-        errors = data.get("errors") or [{}]
-        message = errors[0].get("message", "No such user")[:40]
+    try:
+        data = f.to_json()
+        out = []
+        for week in data["weeks"]:
+            days = [0] * 7
+            for day in week["contribution_days"]:
+                days[day["weekday"] % 7] = max(0, min(4, int(day["level"])))
+            out.append(days)
+    except (ValueError, KeyError, TypeError):
+        message = "Bad data"
         return
-    cal = user["contributionsCollection"]["contributionCalendar"]
-    total = cal["totalContributions"]
-    out = []
-    for week in cal["weeks"]:
-        days = [0] * 7
-        for day in week["contributionDays"]:
-            days[day["weekday"]] = day["contributionCount"]
-        out.append(days)
+    total = data.get("total_contributions")
     weeks = out[-screen.width:]
     message = None
 
 
 def _on_error(f):
     global message
-    message = "Check token" if f.http_status in (401, 403) else f"HTTP {f.http_status}"
+    message = "No such user" if f.http_status == 404 else f"HTTP {f.http_status}"
     return True
 
 
 def _setup():
     global api, key, pens, message
     cfg = gitmatrix.settings(NAME)
-    k = (cfg.get("username"), cfg.get("token"), cfg.get("refresh"), cfg.get("colour"))
+    k = ((cfg.get("username") or "").strip().lstrip("@"), cfg.get("refresh_days"), cfg.get("colour"))
     if k == key:
         return
     key = k
-    username, token, refresh, colour = k
+    username, days, colour = k
     r, g, b = _rgb(colour)
     pens = [color.rgb(int(r * f), int(g * f), int(b * f)) for f in LEVELS]
     api = None
-    if not username or not token:
-        message = "Set a username and token"
+    if not username:
+        message = "Set a username"
         return
     message = None
-    body = json.dumps({"query": QUERY, "variables": {"login": username}}).encode()
+    days = max(1, min(MAX_DAYS, days or 1))
     api = AsyncFetch(HOST, 443, use_tls=True)
     api.on_complete(_on_complete)
     api.on_error(_on_error)
-    api.fetch("/graphql", interval=max(60, refresh or 900), method="POST", data=body,
-              headers={"Authorization": "bearer " + token, "Content-Type": "application/json"})
+    api.fetch("/" + username + ".contribs", interval=days * DAY_S, headers={"Accept": "application/json"})
 
 
 def on_show():
@@ -86,12 +82,6 @@ def on_show():
 
 def on_settings():
     _setup()
-
-
-def _level(count, top):
-    if count <= 0 or top <= 0:
-        return 0
-    return min(4, 1 + (count - 1) * 4 // top)
 
 
 def _say(text):
@@ -119,9 +109,8 @@ def update():
     if not weeks:
         _say(message or "Loading")
         return
-    top = max(max(w) for w in weeks)
     x0 = screen.width - len(weeks)
     for i, days in enumerate(weeks):
-        for y, count in enumerate(days):
-            screen.pen = pens[_level(count, top)]
+        for y, level in enumerate(days):
+            screen.pen = pens[level]
             screen.rectangle(x0 + i, y, 1, 1)
