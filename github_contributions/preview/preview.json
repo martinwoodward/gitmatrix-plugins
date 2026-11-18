@@ -1,0 +1,10 @@
+{
+  "skip": 1,
+  "seconds": 2,
+  "settings": {
+    "username": "octocat"
+  },
+  "fetch": {
+    "github.com/octocat.contribs": "contribs.json"
+  }
+}

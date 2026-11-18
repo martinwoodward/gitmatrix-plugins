@@ -25,8 +25,10 @@ Each plugin is a folder at the top of this repo, named as a Python identifier:
 my_plugin/
     __init__.py      # the code: update() draws one frame into `screen` (53x7)
     package.json     # manifest (below)
-    thumbnail.png    # 53x7 preview shown on Discover
+    thumbnail.png    # 53x7 still, shown on Discover until there's a preview.gif
     config.html      # optional Art Matrix-style settings page
+    preview/         # optional setup for the animated preview (below)
+    preview.gif      # written by CI, don't edit
 ```
 
 A minimal `__init__.py`:
@@ -85,7 +87,41 @@ python ci/generate_packages.py --check  # what CI runs
 ```
 
 Commit the result and open a pull request. CI validates every manifest, settings
-schema and thumbnail; on `main` it regenerates `index.json` if anything is stale.
+schema and thumbnail; on `main` it records each plugin's `preview.gif` and regenerates
+`index.json` if anything is stale.
+
+### Previews
+
+Discover shows an animated `preview.gif` of each plugin: CI runs it for a few seconds
+with the firmware's
+[`tools/preview.py`](https://github.com/martinwoodward/gitmatrix/blob/main/gitmatrix/tools/preview.py)
+and draws the display as LED dots. Neither `preview.gif` nor `preview/` is installed on
+the device. A pull request's previews are attached to its CI run as the `previews`
+artifact, so you can check them before merging.
+
+The recording has no network and no settings, so a plugin that needs either should add
+`preview/preview.json` with canned ones (secrets included: use fake values, it's public):
+
+```json
+{
+  "skip": 1,
+  "settings": {"username": "octocat"},
+  "fetch": {"github.com/octocat.contribs": "contribs.json"}
+}
+```
+
+`fetch` maps `"host/path"` (no query string) to a file in `preview/` that
+`fetch.AsyncFetch` returns; anything else gets HTTP 404. `seconds` (1–15, default 6),
+`skip` (seconds to run first) and `seed` (for `random`) are optional. See
+[`json_feed/preview/`](json_feed/preview) and
+[`github_contributions/preview/`](github_contributions/preview), and the
+[plugin API](https://github.com/martinwoodward/gitmatrix/blob/main/docs/gitmatrix/plugin-api.md#store-previews)
+for what renders faithfully. To record one locally (needs Pillow and a checkout of
+[martinwoodward/gitmatrix](https://github.com/martinwoodward/gitmatrix)):
+
+```sh
+python3 ../gitmatrix/gitmatrix/tools/preview.py my_plugin   # writes my_plugin/preview.gif
+```
 
 ### Good citizenship on the device
 

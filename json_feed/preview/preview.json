@@ -1,0 +1,6 @@
+{
+  "skip": 1,
+  "fetch": {
+    "api.github.com/repos/micropython/micropython": "repo.json"
+  }
+}

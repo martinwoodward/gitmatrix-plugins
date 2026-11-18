@@ -30,6 +30,23 @@ jobs:
             echo "::error::Run \`python ci/generate_packages.py\` and commit the result."
             exit 1
           fi
+      - name: Check out the GitMatrix firmware (for tools/preview.py)
+        uses: actions/checkout@v4
+        with:
+          repository: martinwoodward/gitmatrix
+          path: firmware
+          sparse-checkout: gitmatrix
+      - name: Install Pillow
+        # pinned so every build records byte-identical GIFs
+        run: pip install pillow==12.1.1
+      - name: Record previews
+        run: OUT="$RUNNER_TEMP/previews" ci/record_previews.sh
+      - name: Upload previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: previews
+          path: ${{ runner.temp }}/previews
+          if-no-files-found: ignore
 
   publish:
     name: Regenerate index.json
@@ -44,16 +61,28 @@ jobs:
           python-version: '3.13'
       - name: Lint
         run: pipx run ruff check .
+      - name: Check out the GitMatrix firmware (for tools/preview.py)
+        uses: actions/checkout@v4
+        with:
+          repository: martinwoodward/gitmatrix
+          path: firmware
+          sparse-checkout: gitmatrix
+      - name: Install Pillow
+        # pinned so every build records byte-identical GIFs
+        run: pip install pillow==12.1.1
+      - name: Record previews
+        run: ci/record_previews.sh
       - name: Generate manifests and index
         run: python ci/generate_packages.py
       - name: Commit if anything changed
         run: |
-          if git diff --quiet; then
+          git add -A
+          if git diff --cached --quiet; then
             echo "Manifests and index.json already up to date."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898732+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Regenerate package manifests and index.json"
+          git commit -m "Regenerate previews, package manifests and index.json"
           git push
           python ci/generate_packages.py --check
