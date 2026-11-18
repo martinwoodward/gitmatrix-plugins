@@ -13,7 +13,7 @@ GitHub redirects it if the repository is renamed.
 
 | Plugin | What it does |
 | --- | --- |
-| [`github_contributions`](github_contributions) | Anyone's contribution graph, live from the GitHub API (settings schema with a secret token) |
+| [`github_contributions`](github_contributions) | Anyone's contribution graph from GitHub's public `.contribs` feed (no token needed) |
 | [`json_feed`](json_feed) | Scrolls a value from any JSON URL (URL, secret and colour settings) |
 | [`matrix_rain`](matrix_rain) | Falling green code (an Art Matrix-style `config.html`) |
 
