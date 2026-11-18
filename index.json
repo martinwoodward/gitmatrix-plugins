@@ -1,0 +1,68 @@
+{
+  "plugins": {
+    "github_contributions": "GitHub Contributions",
+    "json_feed": "JSON Feed",
+    "matrix_rain": "Matrix Rain"
+  },
+  "details": {
+    "github_contributions": {
+      "description": "Anyone's contribution graph, live from GitHub",
+      "author": "martinwoodward",
+      "category": "Information",
+      "hash": "e607e7c1257a",
+      "version": "1.0.0",
+      "requires_internet": true,
+      "tags": [
+        "github",
+        "contributions",
+        "graph",
+        "api"
+      ],
+      "size": 3941,
+      "files": 2,
+      "settings": true,
+      "config": false,
+      "input": false,
+      "min_firmware": "0.1.0"
+    },
+    "json_feed": {
+      "description": "Scrolls a value from any JSON URL",
+      "author": "martinwoodward",
+      "category": "Information",
+      "hash": "72cb82bb47f6",
+      "version": "1.0.0",
+      "requires_internet": true,
+      "tags": [
+        "json",
+        "api",
+        "feed",
+        "ticker"
+      ],
+      "size": 3268,
+      "files": 2,
+      "settings": true,
+      "config": false,
+      "input": false,
+      "min_firmware": "0.1.0"
+    },
+    "matrix_rain": {
+      "description": "Falling green code, Matrix style",
+      "author": "martinwoodward",
+      "category": "Visualisations",
+      "hash": "93234c1496dc",
+      "version": "1.0.0",
+      "requires_internet": false,
+      "tags": [
+        "matrix",
+        "rain",
+        "code",
+        "ambient"
+      ],
+      "size": 3106,
+      "files": 3,
+      "settings": false,
+      "config": true,
+      "input": false
+    }
+  }
+}

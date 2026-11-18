@@ -1,0 +1,59 @@
+name: Package manifests and index
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: packaging-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Validate plugins
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Lint
+        run: pipx run ruff check .
+      - name: Check manifests and index
+        run: |
+          if ! python ci/generate_packages.py --check; then
+            echo "::error::Run \`python ci/generate_packages.py\` and commit the result."
+            exit 1
+          fi
+
+  publish:
+    name: Regenerate index.json
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Lint
+        run: pipx run ruff check .
+      - name: Generate manifests and index
+        run: python ci/generate_packages.py
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet; then
+            echo "Manifests and index.json already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898732+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Regenerate package manifests and index.json"
+          git push
+          python ci/generate_packages.py --check

@@ -1,0 +1,54 @@
+{
+  "name": "GitHub Contributions",
+  "version": "1.0.0",
+  "hash": "e607e7c1257a",
+  "description": "Anyone's contribution graph, live from GitHub",
+  "author": "martinwoodward",
+  "category": "Information",
+  "requires_internet": true,
+  "tags": [
+    "github",
+    "contributions",
+    "graph",
+    "api"
+  ],
+  "min_firmware": "0.1.0",
+  "settings": [
+    {
+      "key": "username",
+      "type": "text",
+      "label": "GitHub username",
+      "placeholder": "octocat"
+    },
+    {
+      "key": "token",
+      "type": "secret",
+      "label": "GitHub token",
+      "help": "A token with no scopes is enough for public contributions"
+    },
+    {
+      "key": "refresh",
+      "type": "int",
+      "label": "Refresh every (s)",
+      "min": 60,
+      "max": 86400,
+      "default": 900
+    },
+    {
+      "key": "colour",
+      "type": "color",
+      "label": "Colour",
+      "default": "#39d353"
+    }
+  ],
+  "urls": [
+    [
+      "plugins/github_contributions/__init__.py",
+      "__init__.py"
+    ],
+    [
+      "plugins/github_contributions/thumbnail.png",
+      "thumbnail.png"
+    ]
+  ]
+}

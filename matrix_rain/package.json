@@ -1,0 +1,29 @@
+{
+  "name": "Matrix Rain",
+  "version": "1.0.0",
+  "hash": "93234c1496dc",
+  "description": "Falling green code, Matrix style",
+  "author": "martinwoodward",
+  "category": "Visualisations",
+  "requires_internet": false,
+  "tags": [
+    "matrix",
+    "rain",
+    "code",
+    "ambient"
+  ],
+  "urls": [
+    [
+      "plugins/matrix_rain/__init__.py",
+      "__init__.py"
+    ],
+    [
+      "plugins/matrix_rain/config.html",
+      "config.html"
+    ],
+    [
+      "plugins/matrix_rain/thumbnail.png",
+      "thumbnail.png"
+    ]
+  ]
+}

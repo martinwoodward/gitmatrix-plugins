@@ -1,0 +1,24 @@
+<form method="post" action="/config?plugin={{ plugin }}">
+  <fieldset>
+    <legend>Speed</legend>
+    <label><input type="radio" name="speed" value="0.5" {{ "checked" if placeholder.speed == 0.5 else "" }}> Slow</label>
+    <label><input type="radio" name="speed" value="1.0" {{ "checked" if placeholder.speed == 1.0 else "" }}> Normal</label>
+    <label><input type="radio" name="speed" value="2.0" {{ "checked" if placeholder.speed == 2.0 else "" }}> Fast</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Density</legend>
+    <label><input type="radio" name="density" value="6" {{ "checked" if placeholder.density == 6 else "" }}> Sparse</label>
+    <label><input type="radio" name="density" value="12" {{ "checked" if placeholder.density == 12 else "" }}> Normal</label>
+    <label><input type="radio" name="density" value="24" {{ "checked" if placeholder.density == 24 else "" }}> Heavy</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Colour</legend>
+    <input type="color" name="colour" aria-label="Colour" value="{{ '#%02x%02x%02x' % placeholder.colour }}">
+    <label><input type="checkbox" name="white_heads" {{ "checked" if placeholder.white_heads else "" }}> Bright white heads</label>
+  </fieldset>
+
+  <button type="submit">Save</button>
+  <button type="submit" name="reset" value="1" class="secondary">Reset to defaults</button>
+</form>

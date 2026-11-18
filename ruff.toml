@@ -1,0 +1,9 @@
+line-length = 120
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "W", "B", "I"]
+
+[lint.per-file-ignores]
+# picovector globals (screen, color, ...) are provided by the firmware
+"*/__init__.py" = ["F821"]

@@ -1,0 +1,68 @@
+{
+  "name": "JSON Feed",
+  "version": "1.0.0",
+  "hash": "72cb82bb47f6",
+  "description": "Scrolls a value from any JSON URL",
+  "author": "martinwoodward",
+  "category": "Information",
+  "requires_internet": true,
+  "tags": [
+    "json",
+    "api",
+    "feed",
+    "ticker"
+  ],
+  "min_firmware": "0.1.0",
+  "settings": [
+    {
+      "key": "url",
+      "type": "url",
+      "label": "Feed URL",
+      "default": "https://api.github.com/repos/micropython/micropython",
+      "placeholder": "https://example.com/data.json"
+    },
+    {
+      "key": "path",
+      "type": "text",
+      "label": "Value path",
+      "default": "stargazers_count",
+      "help": "Dotted path to the value, e.g. data.0.price"
+    },
+    {
+      "key": "label",
+      "type": "text",
+      "label": "Label",
+      "default": "Stars"
+    },
+    {
+      "key": "token",
+      "type": "secret",
+      "label": "Bearer token",
+      "help": "Optional; sent as Authorization: Bearer"
+    },
+    {
+      "key": "refresh",
+      "type": "int",
+      "label": "Refresh every (s)",
+      "min": 30,
+      "max": 86400,
+      "default": 300
+    },
+    {
+      "key": "colour",
+      "type": "color",
+      "label": "Colour",
+      "default": "#ffd33d"
+    }
+  ],
+  "urls": [
+    [
+      "plugins/json_feed/__init__.py",
+      "__init__.py"
+    ],
+    [
+      "plugins/json_feed/thumbnail.png",
+      "thumbnail.png"
+    ]
+  ]
+}
