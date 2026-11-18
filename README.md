@@ -6,8 +6,7 @@ and installs plugins straight onto the device.
 
 The format is the same as [pimoroni/artmatrix-plugins](https://github.com/pimoroni/artmatrix-plugins),
 so Art Matrix plugins port with small changes (mostly: the screen is 53×7). See the
-[plugin API](https://github.com/martinwoodward/ghcontrib/blob/main/docs/gitmatrix/plugin-api.md)
-for everything a plugin can use.
+author guide and example plugins below for GitMatrix-specific details.
 
 | Plugin | What it does |
 | --- | --- |
