@@ -6,7 +6,10 @@ and installs plugins straight onto the device.
 
 The format is the same as [pimoroni/artmatrix-plugins](https://github.com/pimoroni/artmatrix-plugins),
 so Art Matrix plugins port with small changes (mostly: the screen is 53×7). See the
-author guide and example plugins below for GitMatrix-specific details.
+[plugin API](https://github.com/martinwoodward/ghcontrib/blob/main/docs/gitmatrix/plugin-api.md)
+and the author guide and examples below for GitMatrix-specific details. The API link
+will work once the firmware repository is public and the documentation reaches `main`;
+GitHub redirects it if the repository is renamed.
 
 | Plugin | What it does |
 | --- | --- |
