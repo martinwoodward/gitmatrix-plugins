@@ -27,6 +27,9 @@ TARGET_PREFIX = "plugins"
 NOT_PLUGINS = {"ci", "docs"}
 THUMBNAIL = "thumbnail.png"
 THUMBNAIL_SIZE = (53, 7)
+# recorded by gitmatrix/tools/preview.py from the setup in preview/, for Discover only
+PREVIEW = "preview.gif"
+PREVIEW_DIR = "preview"
 # shown on Discover's cards, so every plugin needs all three
 DETAILS = ("description", "author", "category")
 CATEGORIES = ("Information", "Visualisations", "Scenes", "Interactive", "3D")
@@ -60,7 +63,10 @@ def is_shippable(path, plugin):
         return False
     if any(path.name.endswith(tail) for tail in EXCLUDE_TAILS):
         return False
-    return not any(part in EXCLUDE_DIRS for part in path.relative_to(plugin).parts[:-1])
+    parts = path.relative_to(plugin).parts
+    if parts == (PREVIEW,) or (len(parts) > 1 and parts[0] == PREVIEW_DIR):
+        return False
+    return not any(part in EXCLUDE_DIRS for part in parts[:-1])
 
 
 def plugin_files(plugin):
@@ -135,6 +141,10 @@ def index_entry(plugin, manifest):
     entry["input"] = bool(manifest.get("input"))
     if manifest.get("min_firmware"):
         entry["min_firmware"] = manifest["min_firmware"]
+    preview = plugin / PREVIEW
+    if preview.is_file():
+        # Discover adds it to the GIF's URL, so a new recording isn't served from cache
+        entry["preview"] = hashlib.sha1(preview.read_bytes()).hexdigest()[:HASH_LENGTH]
     return entry
 
 
@@ -212,6 +222,9 @@ def validate_plugin(plugin, manifest):
         problems.append(f"'{name}' has no {THUMBNAIL} ({THUMBNAIL_SIZE[0]}x{THUMBNAIL_SIZE[1]})")
     elif png_size(thumb) != THUMBNAIL_SIZE:
         problems.append(f"'{name}' {THUMBNAIL} is {png_size(thumb)}, it should be {THUMBNAIL_SIZE}")
+    preview = plugin / PREVIEW
+    if preview.is_file() and preview.read_bytes()[:6] not in (b"GIF87a", b"GIF89a"):
+        problems.append(f"'{name}' {PREVIEW} is not a GIF")
     return problems
 
 

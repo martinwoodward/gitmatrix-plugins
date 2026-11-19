@@ -22,7 +22,8 @@
       "settings": true,
       "config": false,
       "input": false,
-      "min_firmware": "0.1.0"
+      "min_firmware": "0.1.0",
+      "preview": "ce6155e5863c"
     },
     "json_feed": {
       "description": "Scrolls a value from any JSON URL",
@@ -42,7 +43,8 @@
       "settings": true,
       "config": false,
       "input": false,
-      "min_firmware": "0.1.0"
+      "min_firmware": "0.1.0",
+      "preview": "9d1c4fde6c5c"
     },
     "matrix_rain": {
       "description": "Falling green code, Matrix style",
@@ -61,7 +63,8 @@
       "files": 3,
       "settings": false,
       "config": true,
-      "input": false
+      "input": false,
+      "preview": "dd9935fe1c2e"
     }
   }
 }
